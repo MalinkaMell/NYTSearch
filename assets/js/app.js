@@ -1,6 +1,7 @@
 $(document).ready(function () {
 
     $("#search-button").on("click", function () {
+
         event.preventDefault();
         $("#articles").empty();
         let getQuery = $("#search_term").val();
@@ -27,7 +28,7 @@ $(document).ready(function () {
 
         let queryURL =
             "https://api.nytimes.com/svc/search/v2/articlesearch.json?q="
-            + getQueryString + /*"&facet_fields=source&facet=true&" +*/ startYear + endYear +
+            + getQueryString + startYear + endYear +
             "&api-key=e5rUYLdd4pWA5sZoPOZEy4AUDjVJ9ie8"
         console.log(queryURL)
 
@@ -35,6 +36,7 @@ $(document).ready(function () {
             url: queryURL,
             method: "GET"
         }).then(function (response) {
+            console.log(response)
             if (response.response.docs.length !== 0) {
                 for (let i = 0; i < limit; i++) {
                     let divCard = $("<div>");
@@ -44,7 +46,7 @@ $(document).ready(function () {
                     let divColImg = $("<div>");
                     divColImg.attr("class", "col-md-4");
                     let img = $("<img>");
-                    img.attr("width", "300px")
+                    img.attr("width", "350px")
                     if (response.response.docs[i].multimedia.length === 0) {
                         img.attr("src", "http://via.placeholder.com/300x200");
                     }
@@ -61,6 +63,10 @@ $(document).ready(function () {
                     cardText.attr("class", "card-text");
                     let source = $("<p>");
                     source.attr("class", "card-text text-muted");
+                    let pubDate = $("<p>");
+                    pubDate.attr("class", "card-text");
+                    let byLine = $("<p>");
+                    byLine.attr("class", "card-text");
                     let url = $("<p>");
                     url.attr("class", "link");
                     divCard.append(divRow);
@@ -70,6 +76,8 @@ $(document).ready(function () {
                     colContent.append(cardBody);
                     cardBody.append(cardTitle);
                     cardBody.append(cardText);
+                    cardBody.append(byLine);
+                    cardBody.append(pubDate);
                     cardBody.append(source);
                     cardBody.append(url);
 
@@ -77,7 +85,9 @@ $(document).ready(function () {
 
                     $("#articles").append(divCard);
                     cardTitle.html(response.response.docs[i].snippet);
-                    source.html(`Source: ${response.response.docs[i].source}`)
+                   // source.html(`<b>Source:</b> ${response.response.docs[i].source}`);
+                    pubDate.html(`<b>Publishing date:</b> ${response.response.docs[i].pub_date}`)
+                    byLine.html(`<b>By:</b> ${response.response.docs[i].byline.original}`)
                     url.html(`<a href=${response.response.docs[i].web_url} target="_blank">Got To Article</a>`)
 
                 }
